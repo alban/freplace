@@ -19,7 +19,7 @@ struct event {
 // we need this to make sure the compiler doesn't remove our struct
 const struct event *unusedbindevent __attribute__((unused));
 
-__attribute__((noinline)) int myextension(struct pt_regs *ctx) {
+__attribute__((noinline)) u64 myextension(struct pt_regs *ctx) {
 	volatile int ret = 1;
 	return ret;
 }
