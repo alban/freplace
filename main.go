@@ -6,6 +6,8 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	"flag"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -21,7 +23,17 @@ import (
 //go:generate go run github.com/cilium/ebpf/cmd/bpf2go -target amd64 -cc clang -type event bpf bpf/freplace.c -- -I./bpf
 //go:generate go run github.com/cilium/ebpf/cmd/bpf2go -target amd64 -cc clang extension bpf/extension.c -- -I./bpf
 
+var progTargetID int
+
+func init() {
+	flag.IntVar(&progTargetID, "prog-target-id", 0, "attach extension to an ebpf program with this id")
+}
+
 func main() {
+	flag.Parse()
+
+	fmt.Printf("prog target id %d\n", progTargetID)
+
 	stopper := make(chan os.Signal, 1)
 	signal.Notify(stopper, os.Interrupt, syscall.SIGTERM)
 
@@ -50,7 +62,16 @@ func main() {
 	}
 	defer replacement.Close()
 
-	_, err = link.AttachFreplace(objs.KprobeExecve, "myextension", replacement)
+	progTarget := objs.KprobeExecve
+	if progTargetID != 0 {
+		fmt.Printf("Attaching extension to prog id %d\n", progTargetID)
+		progTarget, err = ebpf.NewProgramFromID(ebpf.ProgramID(progTargetID))
+		if err != nil {
+			log.Fatalf("loading ebpf program with id %d: %+v", progTargetID, err)
+		}
+	}
+
+	_, err = link.AttachFreplace(progTarget, "myextension", replacement)
 	if err != nil {
 		log.Fatalf("attaching replacement function: %s", err)
 	}
