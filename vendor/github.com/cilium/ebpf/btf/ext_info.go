@@ -173,6 +173,8 @@ marshal:
 				fn:     fn,
 				offset: iter.Offset,
 			}
+			fmt.Printf("Alban: FuncMetadata: name=%q (type=%+v linkage=%+v) offset=%d\n",
+				fi.fn.Name, fi.fn.Type, fi.fn.Linkage, fi.offset)
 			if err := fi.marshal(&fiBuf, enc); err != nil {
 				return nil, nil, nil, fmt.Errorf("write func info: %w", err)
 			}
@@ -183,6 +185,7 @@ marshal:
 				line:   line,
 				offset: iter.Offset,
 			}
+			fmt.Printf("Alban: LineInfo: %+v\n", li)
 			if err := li.marshal(&liBuf, enc.strings); err != nil {
 				return nil, nil, nil, fmt.Errorf("write line info: %w", err)
 			}

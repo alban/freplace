@@ -769,6 +769,10 @@ func (insns Instructions) encodeFunctionReferences() error {
 
 			ins.Constant = int64(symOffset - offset - 1)
 
+			fmt.Printf("Function reference: %s at insn %d: symbol %q: symOffset %d - offset %d -1 = %d\n",
+				ins.OpCode, i, ins.Reference(),
+				symOffset, offset, ins.Constant)
+
 		case ins.OpCode.Class().IsJump() && ins.Offset == -1:
 			symOffset, ok := symbolOffsets[ins.Reference()]
 			if !ok {

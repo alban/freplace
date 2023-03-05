@@ -277,7 +277,7 @@ func newProgramWithOptions(spec *ProgramSpec, opts ProgramOptions) (*Program, er
 		if bytecode[8*i]&0xf0 != 0x80 {
 			continue
 		}
-		fmt.Printf("Instruction #%d: code=%x regs=%x offset=%x%x imm=%x%x%x%x\n",
+		fmt.Printf("Instruction #%d: code=%x regs=%x offset=%.2x%.2x imm=%.2x%.2x%.2x%.2x\n",
 			i,
 			bytecode[8*i],
 			bytecode[8*i+1],
@@ -326,6 +326,8 @@ func newProgramWithOptions(spec *ProgramSpec, opts ProgramOptions) (*Program, er
 		attr.LogSize = uint32(len(logBuf))
 		attr.LogBuf = sys.NewSlicePointer(logBuf)
 	}
+
+	fmt.Printf("attr: %+v\n", attr)
 
 	fd, err := sys.ProgLoad(attr)
 	if err == nil {
