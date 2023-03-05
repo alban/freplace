@@ -65,6 +65,16 @@ func main() {
 	progTarget := objs.KprobeExecve
 	if progTargetID != 0 {
 		fmt.Printf("Attaching extension to prog id %d\n", progTargetID)
+		btfHandle, err := objs.KprobeExecve.Handle()
+		if err != nil {
+			log.Fatalf("cannot get handle: %s", err)
+		}
+		info, err := btfHandle.Info()
+		if err != nil {
+			log.Fatalf("cannot get info on handle: %s", err)
+		}
+		os.Setenv("CILIUM_BTF_HANDLE", fmt.Sprintf("%d", info.ID))
+
 		progTarget, err = ebpf.NewProgramFromID(ebpf.ProgramID(progTargetID))
 		if err != nil {
 			log.Fatalf("loading ebpf program with id %d: %+v", progTargetID, err)
