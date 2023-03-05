@@ -173,11 +173,11 @@ marshal:
 				fn:     fn,
 				offset: iter.Offset,
 			}
-			fmt.Printf("Alban: FuncMetadata: name=%q (type=%+v linkage=%+v) offset=%d\n",
-				fi.fn.Name, fi.fn.Type, fi.fn.Linkage, fi.offset)
 			if err := fi.marshal(&fiBuf, enc); err != nil {
 				return nil, nil, nil, fmt.Errorf("write func info: %w", err)
 			}
+			fmt.Printf("Alban: FuncMetadata: name=%q (type=%+v linkage=%+v) offset=%d fiBuf.Bytes()=%+v\n",
+				fi.fn.Name, fi.fn.Type, fi.fn.Linkage, fi.offset, fiBuf.Bytes())
 		}
 
 		if line, ok := iter.Ins.Source().(*Line); ok {
@@ -185,7 +185,7 @@ marshal:
 				line:   line,
 				offset: iter.Offset,
 			}
-			fmt.Printf("Alban: LineInfo: %+v\n", li)
+			fmt.Printf("Alban: LineInfo: %q offset=%v\n", li.line, li.offset)
 			if err := li.marshal(&liBuf, enc.strings); err != nil {
 				return nil, nil, nil, fmt.Errorf("write line info: %w", err)
 			}
