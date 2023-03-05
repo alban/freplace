@@ -3,6 +3,8 @@ package link
 import (
 	"errors"
 	"fmt"
+	"os"
+	"strconv"
 
 	"github.com/cilium/ebpf"
 	"github.com/cilium/ebpf/btf"
@@ -44,7 +46,14 @@ func AttachFreplace(targetProg *ebpf.Program, name string, prog *ebpf.Program) (
 	if targetProg != nil {
 		btfHandle, err := targetProg.Handle()
 		if err != nil {
-			return nil, err
+			btfid, err := strconv.Atoi(os.Getenv("CILIUM_BTF_HANDLE"))
+			if err != nil {
+				return nil, err
+			}
+			btfHandle, err = btf.NewHandleFromID(sys.BTFID(btfid))
+			if err != nil {
+				return nil, err
+			}
 		}
 		defer btfHandle.Close()
 
