@@ -4,7 +4,8 @@
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
 
-SEC("freplace/myextension") u64 myextension(struct pt_regs *ctx) {
+// struct pt_regs *ctx
+SEC("freplace/myextension") u64 myextension() {
 	return 2;
 }
 

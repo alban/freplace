@@ -19,7 +19,8 @@ struct event {
 // we need this to make sure the compiler doesn't remove our struct
 const struct event *unusedbindevent __attribute__((unused));
 
-__attribute__((noinline)) u64 myextension(struct pt_regs *ctx) {
+//struct pt_regs *ctx
+__attribute__((noinline)) u64 myextension() {
 	volatile int ret = 1;
 	return ret;
 }
@@ -29,7 +30,7 @@ int BPF_KPROBE(kprobe_execve)
 {
 	struct event event = {};
 
-	event.extension = myextension(ctx);
+	event.extension = myextension(); // ctx
 	event.pid = bpf_get_current_pid_tgid();
 	bpf_get_current_comm(&event.comm, sizeof(event.comm));
 
